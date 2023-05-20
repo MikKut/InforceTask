@@ -48,3 +48,56 @@ implementing the next feature, choose refactoring because we want to see how you
 work looks.
 We want to see clear, correct code that uses the suitable data structures and patterns,
 and we want to see your style.
+
+# Architectural Overview
+There will be created a web application with a server-side component and a client-side component. The server-side component will be built using ASP.NET MVC Core with EntityFramework, and the client-side component will be built using Angular.
+
+## Server-Side Architecture
+The server-side component will follow a standard MVC pattern:
+
+### Model: There will be used Entity Framework (Code-First Approach) to define your data models. The primary models will be User, URL, and About.
+Controller: There will be multiple controllers such as UserController, URLController, and AboutController.
+### View: There will be used Razor for some views, but most of your views will be rendered by Angular on the client-side.
+
+## Client-Side Architecture
+On the client-side, Angular will consume the server-side APIs to provide interactivity:
+
+### Model: Models for User, URL, and About on client-side will mirror server-side models.
+### Component: There will be Angular components corresponding to each view. The AppComponent will be a root component.
+### Service: Angular services will be used to communicate with your server-side APIs.
+
+## Security
+For authentication, you can use JWT-based authentication. JWT tokens will be generated on the server-side and passed to the client. The client will send this token in the header of every subsequent request.
+
+## Database
+The application will use a SQL database such as SQL Server or MySQL. EF Code-first will be used to create and manage the database.
+
+## Design Patterns
+You will use the following patterns in your application:
+
+### Repository Pattern: This pattern will be used for all database operations. It provides a clean separation of concerns and a uniform interface for data access.
+### Unit of Work Pattern: This pattern will be used to handle transactions.
+### Factory Pattern: This pattern will be used for creating instances of models.
+### Dependency Injection (DI): DI will be used for managing dependencies between objects.
+
+## Key Features
+### URL Shortening
+The core feature of the application is URL shortening. The simplest way to implement this is by using a base62 encoding algorithm. This converts the URL's ID (an integer) into a base62 string, which is used as the short URL.
+
+### URL Redirect
+When a user visits a short URL, the application will decode the base62 string back into an ID, look up the corresponding URL in the database, and then redirect the user to that URL.
+
+### URL Info
+Each URL will have associated data like CreatedBy, CreatedDate, and any other fields you choose to include. This data will be stored in the URL table in the database.
+
+## Unit Testing
+There will be used a .NET test framework xUnit for server-side unit tests. For Angular, use Jasmine/Karma for unit testing.
+
+## Application Flow
+User arrives at the Login View, enters credentials, and authorizes themselves.
+If the user is valid, they are redirected to the Short URLs Table view.
+On the Short URLs Table view, the user can see a table with all URLs and their short equivalents. They can also add a new URL (if authorized).
+If a user enters a URL that already exists, an error message is displayed.
+After a URL is added, it appears in the table immediately (implemented through Angular).
+By clicking on a short URL in the table, the user is redirected to the Short URL Info view.
+On the About view, the user can see a description of the URL Shortening algorithm. If the user is an admin, they can edit this description.
