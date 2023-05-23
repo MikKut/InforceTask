@@ -1,0 +1,82 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ClientApi", "ClientApi", "{1CDF5583-731A-40EF-BB26-67889513E65D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shortener.Api", "Shortener.Api", "{76BFEF09-BAB8-4774-8798-20FD926A9E6E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IdentityServer", "IdentityServer", "{484B8ADC-280F-4182-BD33-CD6EE25D96E5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrlShortenerApi.Host", "ShortenerApi.Host\UrlShortenerApi.Host.csproj", "{484791AB-7D20-4707-B452-BA5709C27CDE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrlShortener.Models", "UrlShortener.Services\UrlShortener.Models.csproj", "{826BBE43-C56D-4512-B1B1-0B3B85B276B0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{D9AB0415-0290-463C-AE8E-515221CCBF16}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Proxy", "Proxy", "{ED24CF09-53F0-4E07-B848-C97953796571}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{13030493-26FC-4F4E-A37C-E78AFB8DB4C4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{45427E73-94C2-4EA9-B0ED-E9169937B01F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gateway", "gateway", "{D44A2F3F-F775-431B-96E8-763F20F7FA91}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nginx", "nginx", "{BB9E56D1-C5AA-42BA-9F1B-00C1074059A3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "conf.d", "conf.d", "{6174EF96-7FFD-427B-B47B-1FCCAA2E1BB0}"
+	ProjectSection(SolutionItems) = preProject
+		default.conf = default.conf
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrlShortenerApi.UnitTests", "UrlShortenerApi.UnitTests\UrlShortenerApi.UnitTests.csproj", "{C136F757-B498-4327-926E-6687C21EFE09}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{F76363A5-FB66-4A25-B654-2A2EB6F5E8D4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{2455E30D-DDD2-4AEF-850F-9DAF39F2CECE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{484791AB-7D20-4707-B452-BA5709C27CDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{484791AB-7D20-4707-B452-BA5709C27CDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{484791AB-7D20-4707-B452-BA5709C27CDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{484791AB-7D20-4707-B452-BA5709C27CDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{826BBE43-C56D-4512-B1B1-0B3B85B276B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{826BBE43-C56D-4512-B1B1-0B3B85B276B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{826BBE43-C56D-4512-B1B1-0B3B85B276B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{826BBE43-C56D-4512-B1B1-0B3B85B276B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C136F757-B498-4327-926E-6687C21EFE09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C136F757-B498-4327-926E-6687C21EFE09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C136F757-B498-4327-926E-6687C21EFE09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C136F757-B498-4327-926E-6687C21EFE09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F76363A5-FB66-4A25-B654-2A2EB6F5E8D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F76363A5-FB66-4A25-B654-2A2EB6F5E8D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F76363A5-FB66-4A25-B654-2A2EB6F5E8D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F76363A5-FB66-4A25-B654-2A2EB6F5E8D4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{484791AB-7D20-4707-B452-BA5709C27CDE} = {76BFEF09-BAB8-4774-8798-20FD926A9E6E}
+		{826BBE43-C56D-4512-B1B1-0B3B85B276B0} = {76BFEF09-BAB8-4774-8798-20FD926A9E6E}
+		{13030493-26FC-4F4E-A37C-E78AFB8DB4C4} = {ED24CF09-53F0-4E07-B848-C97953796571}
+		{45427E73-94C2-4EA9-B0ED-E9169937B01F} = {13030493-26FC-4F4E-A37C-E78AFB8DB4C4}
+		{D44A2F3F-F775-431B-96E8-763F20F7FA91} = {ED24CF09-53F0-4E07-B848-C97953796571}
+		{BB9E56D1-C5AA-42BA-9F1B-00C1074059A3} = {D44A2F3F-F775-431B-96E8-763F20F7FA91}
+		{6174EF96-7FFD-427B-B47B-1FCCAA2E1BB0} = {BB9E56D1-C5AA-42BA-9F1B-00C1074059A3}
+		{C136F757-B498-4327-926E-6687C21EFE09} = {76BFEF09-BAB8-4774-8798-20FD926A9E6E}
+		{F76363A5-FB66-4A25-B654-2A2EB6F5E8D4} = {2455E30D-DDD2-4AEF-850F-9DAF39F2CECE}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {96DCE5CD-FAEA-413B-B89B-E87ED36D4A17}
+	EndGlobalSection
+EndGlobal

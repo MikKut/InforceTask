@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <title></title>
+</head>
+<body>
+  <div *ngIf="url">
+    <p><strong>Original URL:</strong> {{url.originalUrl}}</p>
+    <p><strong>Short URL:</strong> {{url.shortenedUrl}}</p>
+    <p><strong>Created By:</strong> {{url.createdBy}}</p>
+    <p><strong>Created Date:</strong> {{url.createdDate | date}}</p>
+  </div>
+
+</body>
+</html>

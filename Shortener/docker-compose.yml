@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  urlshortener.api:
+    container_name: urlshortener.api.host
+    build:
+      context: .
+      dockerfile: ShortenerApi.Host/Dockerfile
+    environment:
+       - ASPNETCORE_ENVIRONMENT=Development
+       - ASPNETCORE_URLS=http://+:5000
+       - ConnectionString=server=localhost;port=5433;database=catalog;uid=postgres;password=postgres;
+       - Authorization__Authority=http://www.localhost.com:5002
+       - ClientShortUrl=http://www.localhost.com:5003/api/v1/url/
+       - PathBase=http://www.petShop.com:5000
+    depends_on:
+      - postgres
+    ports:
+      - 5000:5000
+  nginx:
+    image: nginx
+    container_name: lde.nginx
+    ports:
+      - 81:80
+    volumes:
+      - ./Proxy/gateway/nginx/conf.d:/etc/nginx/conf.d
+      - ./Proxy/assets:/var/www/assets
+  pgadmin4:
+    image: dpage/pgadmin4
+    container_name: lde.pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@domain.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    depends_on:
+      - postgres
+    ports:
+      - 8001:80 
+  postgres:
+    image: postgres
+    container_name: lde.postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5433:5432
+networks:
+  default:
+    driver: bridge
+    internal: false
+    attachable: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 194.168.0.0/24
+          gateway: 194.168.0.1
