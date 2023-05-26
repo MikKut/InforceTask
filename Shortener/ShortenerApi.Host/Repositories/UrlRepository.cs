@@ -45,7 +45,7 @@ namespace UrlShortenerApi.Host.Repositories
             return url;
         }
 
-        public async Task<Url> GetUrlAsync(UrlDto request)
+        public async Task<Url> GetUrlAsync(Url request)
         {
             return await _context.Urls.FirstOrDefaultAsync(u => u.Id == request.Id);
         }

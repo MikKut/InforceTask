@@ -24,10 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ShortenerApi.Host\UrlShortenerApi.Host.csproj" />
     <ProjectReference Include="..\UrlShortener.Services\UrlShortener.Models.csproj" />
   </ItemGroup>

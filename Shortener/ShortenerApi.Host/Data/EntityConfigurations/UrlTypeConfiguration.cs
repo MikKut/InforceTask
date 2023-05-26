@@ -14,7 +14,7 @@ public class UrlTypeConfiguration
         builder.HasKey(u => u.Id);
 
         builder.Property(u => u.Id)
-            .ValueGeneratedNever();
+    .ValueGeneratedOnAdd();
 
         builder.Property(u => u.OriginalUrl)
             .IsRequired()

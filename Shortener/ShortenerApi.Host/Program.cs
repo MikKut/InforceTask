@@ -1,137 +1,87 @@
 using Infrastructure.Filters;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using UrlShortenerApi.Host.Data;
 using UrlShortenerApi.Configurations.Configurations;
-using Microsoft.Extensions.Hosting;
-using System.IO;
 using UrlShortenerApi.Host.Repositories.Interfaces;
 using UrlShortenerApi.Host.Repositories;
 using UrlShortenerApi.Host.Services.Interfaces;
 using UrlShortenerApi.Host.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Infrastructure.Services;
 using Infrastructure.Services.Interfaces;
 
 var configuration = GetConfiguration();
 
-var builder = Host.CreateDefaultBuilder(args)
-    .ConfigureServices((hostContext, services) =>
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+})
+    .AddJsonOptions(options => options.JsonSerializerOptions.WriteIndented = true)
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
-        services.AddControllers(options =>
-        {
-            options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-        })
-        .AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.WriteIndented = true;
-            options.JsonSerializerOptions.PropertyNamingPolicy = null;
-        })
-        .AddNewtonsoftJson(options =>
-        {
-            options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-        });
+        Title = "shortener HTTP API",
+        Version = "v1",
+        Description = "The Server Service HTTP API"
+    });
+});
 
-        services.AddSwaggerGen(options =>
-        {
-            options.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "Shortener host",
-                Version = "v1",
-                Description = "The UrlShortenerApi.Host Service HTTP API"
-            });
-            #region authorization
-            /*
-            var authority = configuration["Authorization:Authority"];
-            options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-            {
-                Type = SecuritySchemeType.OAuth2,
-                Flows = new OpenApiOAuthFlows()
-                {
-                    Implicit = new OpenApiOAuthFlow()
-                    {
-                        AuthorizationUrl = new Uri($"{authority}/connect/authorize"),
-                        TokenUrl = new Uri($"{authority}/connect/token"),
-                        Scopes = new Dictionary<string, string>()
-                        {
-                            { "mvc", "website" },
-                            { "catalog.catalogitem", "catalog.catalogitem" },
-                            { "catalog.catalogtype", "catalog.catalogtype" },
-                            { "catalog.catalogbrand", "catalog.catalogbrand" },
-                            { "order.makeorder", "order.makeorder" },
-                        }
-                    }
-                }
-            });
+builder.Services.Configure<ShortnerConfig>(configuration);
 
-            options.OperationFilter<AuthorizeCheckOperationFilter>();
-            */
-            #endregion
-        });
+builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddDbContextFactory<ApplicationDbContext>(opts => opts.UseNpgsql(configuration["ConnectionString"]));
 
-        services.AddSingleton<IConfiguration>(configuration);
-        services.Configure<ShortnerConfig>(configuration);
+builder.Services.AddScoped<IUrlRepository, UrlRepository>();
+builder.Services.AddScoped<IUrlService, UrlService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAboutService, AboutService>();
+builder.Services.AddScoped<IAboutRepository, AboutRepository>();
+builder.Services.AddScoped<IDbContextWrapper<ApplicationDbContext>>(provider =>
+{
+var dbContextFactory = provider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
+return new DbContextWrapper<ApplicationDbContext>(dbContextFactory);
+});
 
-        // services.AddAuthorization();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "CorsPolicy",
+        builder => builder
+            .SetIsOriginAllowed((host) => true)
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
 
-        services.AddAutoMapper(typeof(Program));
+var app = builder.Build();
 
-        services.AddCors(options =>
-        {
-            options.AddPolicy(
-                "CorsPolicy",
-                builder => builder
-                    .SetIsOriginAllowed((host) => true)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-        });
-
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(configuration["ConnectionString"]));
-
-        services.AddScoped<IUrlRepository, UrlRepository>();
-        services.AddScoped<IUrlService, UrlService>();
-        services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IAboutService, AboutService>();
-        services.AddScoped<IAboutRepository, AboutRepository>();
-        services.AddScoped<IDbContextWrapper<ApplicationDbContext>>(provider =>
-        {
-            var dbContextFactory = provider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
-            return new DbContextWrapper<ApplicationDbContext>(dbContextFactory);
-        });
-        services.AddLogging();
-    })
-    .ConfigureWebHostDefaults(webBuilder =>
+app.UseSwagger()
+    .UseSwaggerUI(setup =>
     {
-        webBuilder.Configure(app =>
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shortener host API V1");
-            });
-
-            app.UseRouting();
-
-            app.UseCors("CorsPolicy");
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-        });
+        setup.SwaggerEndpoint($"{configuration["PathBase"]}/swagger/v1/swagger.json", "Shortener.API V1");
     });
 
-var host = builder.Build();
+app.UseRouting();
+app.UseCors("CorsPolicy");
 
-// CreateDbIfNotExists(host);
-host.Run();
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapDefaultControllerRoute();
+    endpoints.MapControllers();
+});
+
+CreateDbIfNotExists(app);
+app.Run();
 
 IConfiguration GetConfiguration()
 {
@@ -145,16 +95,19 @@ IConfiguration GetConfiguration()
 
 void CreateDbIfNotExists(IHost host)
 {
-    using var scope = host.Services.CreateScope();
-    var services = scope.ServiceProvider;
-    try
+    using (var scope = host.Services.CreateScope())
     {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        DbInitializer.Initialize(context).Wait();
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred creating the DB.");
+        var services = scope.ServiceProvider;
+        try
+        {
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            DbInitializer.Initialize(context).Wait();
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred creating the DB.");
+        }
     }
 }

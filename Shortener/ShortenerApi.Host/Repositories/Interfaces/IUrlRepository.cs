@@ -10,7 +10,7 @@ namespace UrlShortenerApi.Host.Repositories.Interfaces
         Task DeleteUrl(Url url);
         Task<IEnumerable<Url>> GetAllAsync();
         Task<string> GetLongUrlByShortAsync(string shortCode);
-        Task<Url> GetUrlAsync(UrlDto request);
+        Task<Url> GetUrlAsync(Url request);
         Task<Url> GetUrlByIdAsync(Guid id);
         Task<Url> GetUrlByOriginalStringAsync(string originalUrl);
     }

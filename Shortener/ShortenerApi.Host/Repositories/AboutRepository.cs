@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using UrlShortener.Models.Enteties;
 using UrlShortenerApi.Host.Data;
 using UrlShortenerApi.Host.Repositories.Interfaces;
@@ -16,17 +17,23 @@ namespace UrlShortenerApi.Host.Repositories
 
         public async Task<string> GetAboutInfoAsync()
         {
-            var aboutInfo = await _context.About.SingleAsync();
-            return aboutInfo.Content;
+            return await Task.FromResult(AboutInfo.Content);
         }
 
         public async Task<bool> UpdateAboutInfoAsync(string newInfo)
         {
-            var aboutInfo = await _context.About.SingleAsync();
-            aboutInfo.Content = newInfo;
-            _context.About.Update(aboutInfo);
-            var saveResult = await _context.SaveChangesAsync();
-            return saveResult > 0;
+            if (newInfo.IsNullOrEmpty())
+            {
+                return await Task.FromResult(false);
+            }
+
+            AboutInfo.Content = newInfo;
+            return await Task.FromResult(true);
+        }
+
+        private static class AboutInfo
+        {
+            public static string Content = "Some about info";
         }
     }
 }

@@ -10,21 +10,15 @@ public static class DbInitializer
     {
         _ = await context.Database.EnsureCreatedAsync();
 
-        if (!context.Urls.Any())
-        {
-            await context.Urls.AddRangeAsync(GetPreconfiguredUrls());
-            _ = await context.SaveChangesAsync();
-        }
-
         if (!context.Users.Any())
         {
             await context.Users.AddRangeAsync(GetPreconfiguredUsers());
             _ = await context.SaveChangesAsync();
         }
 
-        if (!context.About.Any())
+        if (!context.Urls.Any())
         {
-            await context.About.AddRangeAsync(GetPreconfiguredAbout());
+            await context.Urls.AddRangeAsync(GetPreconfiguredUrls());
             _ = await context.SaveChangesAsync();
         }
     }
@@ -44,14 +38,6 @@ public static class DbInitializer
         {
             new User(new Guid("25d9f16d-d4e7-4f8b-9c78-42568f829caa"), "admin", "password", Role.Admin, new DateTime(2022, 9, 15, 10, 23, 0)),
             new User(new Guid("67e8c907-9a20-4b89-8b04-eb3f4a4e26a0"), "user", "password", Role.User,  new DateTime(2022, 5, 15, 10, 23, 0)),
-        };
-    }
-
-    private static About GetPreconfiguredAbout()
-    {
-        return new About()
-        {
-            Content = "Some description"
         };
     }
 }

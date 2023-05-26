@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace UrlShortener.Models.Enteties
 {
     public class About
-    { 
+    {
         [Required(ErrorMessage = "Content is required.")]
         public string Content { get; set; }
     }

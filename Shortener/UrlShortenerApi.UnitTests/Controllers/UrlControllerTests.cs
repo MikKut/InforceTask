@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -11,6 +12,7 @@ using UrlShortener.Models.Dto;
 using UrlShortener.Models.Request;
 using UrlShortenerApi.Host.Controllers;
 using UrlShortenerApi.Host.Services.Interfaces;
+using Xunit.Sdk;
 
 namespace UrlShortenerApi.UnitTests.Controllers
 {
@@ -46,9 +48,8 @@ namespace UrlShortenerApi.UnitTests.Controllers
             // Arrange
             var urlDto = new UrlDto
             {
-                Id = Guid.NewGuid(),
                 OriginalUrl = "http://example.com",
-                CreatedBy = new UserDto() // Provide valid UserDto object
+                CreatedById = It.IsAny<Guid>()
             };
             _urlService.Setup(x => x.DeleteUrlAsync(It.IsAny<UrlDto>())).Returns(Task.CompletedTask);
 
@@ -82,9 +83,8 @@ namespace UrlShortenerApi.UnitTests.Controllers
             // Arrange
             var urlDto = new UrlDto
             {
-                Id = Guid.NewGuid(),
                 OriginalUrl = "http://example.com",
-                CreatedBy = new UserDto() // Provide valid UserDto object
+                CreatedById = It.IsAny<Guid>()
             };
             _urlService.Setup(x => x.AddUrlAsync(It.IsAny<UrlDto>())).Returns(Task.CompletedTask);
 
@@ -107,14 +107,8 @@ namespace UrlShortenerApi.UnitTests.Controllers
             };
             var expectedUrlDto = new UrlDto
             {
-                Id = Guid.NewGuid(),
                 OriginalUrl = "http://example.com",
-                CreatedBy = new UserDto()
-                {
-                    Id = new Guid(),
-                    UserName = "Test",
-                    Role = UrlShortener.Models.Enums.Role.Admin
-                }
+                CreatedById = new Guid("6F9619FF-8B86-D011-B42D-00C04FC964FF")
             };
             _urlService.Setup(x => x.CreateShortUrlAsync(It.IsAny<UrlCreateRequest>())).ReturnsAsync(expectedUrlDto);
 
@@ -124,8 +118,8 @@ namespace UrlShortenerApi.UnitTests.Controllers
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             var returnUrlDto = Assert.IsType<UrlDto>(okResult.Value);
-            Assert.Equal(expectedUrlDto.Id, returnUrlDto.Id);
             Assert.Equal(expectedUrlDto.OriginalUrl, returnUrlDto.OriginalUrl);
+            Assert.Equal(expectedUrlDto.CreatedById, returnUrlDto.CreatedById);
             _urlService.Verify(x => x.CreateShortUrlAsync(It.IsAny<UrlCreateRequest>()), Times.Once);
         }
 
@@ -138,10 +132,9 @@ namespace UrlShortenerApi.UnitTests.Controllers
 
             // Act
             var result = await _controller.AddUrl(urlDto);
-            var r = (result as StatusCodeResult)?.StatusCode;
+
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
-            Assert.True((BadRequestObjectResult)result.ToString());
             _urlService.Verify(x => x.AddUrlAsync(urlDto), Times.Once);
         }
 
@@ -150,12 +143,15 @@ namespace UrlShortenerApi.UnitTests.Controllers
         {
             // Arrange
             var urlDto = new UrlDto();
+            _urlService.Setup(x => x.AddUrlAsync(urlDto)).ThrowsAsync(new BusinessException("Test exception", 403));
 
             // Act
             var result = await _controller.AddUrl(urlDto);
 
             // Assert
-            Assert.IsType<BadRequestResult>(result);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(403, objectResult.StatusCode);
+            Assert.Equal("Test exception", objectResult.Value);
         }
 
         [Fact]
@@ -168,7 +164,7 @@ namespace UrlShortenerApi.UnitTests.Controllers
             var result = await _controller.GetAll();
 
             // Assert
-            Assert.IsType<BadRequestResult>(result);
+            Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact]
@@ -181,8 +177,9 @@ namespace UrlShortenerApi.UnitTests.Controllers
             var result = await _controller.GetAll();
 
             // Assert
-            var statusCodeResult = Assert.IsType<StatusCodeResult>(result);
-            Assert.Equal(403, statusCodeResult.StatusCode);
+            var objectResult = Assert.IsType<ObjectResult>(result);
+            Assert.Equal(403, objectResult.StatusCode);
+            Assert.Equal("Test exception", objectResult.Value);
         }
     }
 }

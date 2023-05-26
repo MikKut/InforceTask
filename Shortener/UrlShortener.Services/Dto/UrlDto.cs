@@ -10,13 +10,11 @@ namespace UrlShortener.Models.Dto
 {
     public class UrlDto
     {
-        public Guid Id { get; set; }
-
         public string OriginalUrl { get; set; } = null!;
 
         public string? ShortenedUrl { get; set; }
 
-        public UserDto CreatedBy { get; set; }
+        public Guid CreatedById { get; set; }
 
         public DateTime CreatedAt { get; set; }
     }
