@@ -66,18 +66,11 @@ On the client-side, Angular will consume the server-side APIs to provide interac
 ### Component: There will be Angular components corresponding to each view. The AppComponent will be a root component.
 ### Service: Angular services will be used to communicate with your server-side APIs.
 
-## Security
-For authentication, you can use JWT-based authentication. JWT tokens will be generated on the server-side and passed to the client. The client will send this token in the header of every subsequent request.
-
-## Database
-The application will use a SQL database such as SQL Server or MySQL. EF Code-first will be used to create and manage the database.
-
 ## Design Patterns
 You will use the following patterns in your application:
 
 ### Repository Pattern: This pattern will be used for all database operations. It provides a clean separation of concerns and a uniform interface for data access.
 ### Unit of Work Pattern: This pattern will be used to handle transactions.
-### Factory Pattern: This pattern will be used for creating instances of models.
 ### Dependency Injection (DI): DI will be used for managing dependencies between objects.
 
 ## Key Features
@@ -91,7 +84,7 @@ When a user visits a short URL, the application will decode the base62 string ba
 Each URL will have associated data like CreatedBy, CreatedDate, and any other fields you choose to include. This data will be stored in the URL table in the database.
 
 ## Unit Testing
-There will be used a .NET test framework xUnit for server-side unit tests. For Angular, use Jasmine/Karma for unit testing.
+There will be used a .NET test framework xUnit for server-side unit tests.
 
 ## Application Flow
 User arrives at the Login View, enters credentials, and authorizes themselves.
